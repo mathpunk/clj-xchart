@@ -4,11 +4,11 @@
             [com.hypirion.clj-xchart.specs.styling :as sty]))
 
 (defn axis-counts-match?
-  [{:keys [x y error-bars bubble]}]
-  (and (= (count x)
+  [{:keys [x y error-bars bubble] :as args}]
+  (and (= (count (second x))
           (count y)
-          (count (or error-bars x))
-          (count (or bubble x)))))
+          (count (or error-bars y))
+          (count (or bubble y)))))
 
 (defn ordered?
   [nums]
@@ -27,7 +27,7 @@
                                               (:render-style style)))
 (defmethod data-compatible-with-render-style? :default [series] true)
 
-(defmethod data-compatible-with-render-style? [:area]
+(defmethod data-compatible-with-render-style? :area
   [series]
   (ordered? (second (:x series))))
 

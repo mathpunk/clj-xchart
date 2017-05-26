@@ -2,10 +2,14 @@
  '[com.hypirion.clj-xchart :as c]
  '[clojure.pprint :as pp]
  '[clojure.spec.alpha :as s]
+ '[clojure.spec.test.alpha :as test]
+ '[clojure.string :as str]
+ '[com.hypirion.clj-xchart :as xchart]
  '[com.hypirion.clj-xchart.specs :as cs]
  '[com.hypirion.clj-xchart.specs.examples :as ex]
  '[com.hypirion.clj-xchart.specs.series :as series]
  '[com.hypirion.clj-xchart.specs.series.bubble :as bubble]
+ '[com.hypirion.clj-xchart.specs.series.xy :as xy]
  '[com.hypirion.clj-xchart.specs.styling :as sty])
 
 
@@ -26,9 +30,15 @@
 (def argses (->> (s/exercise ::cs/bubble-chart*-args 5 ex/generators)
                  (mapv first)))
 
-
 (->> argses
      (map #(apply c/bubble-chart* %))
      (apply c/view))
 
+(->> (test/instrumentable-syms)
+     (filter #(str/starts-with? (namespace %) "com.hypirion.clj-xchart"))
+     (test/instrument))
+
+(c/view (xchart/xy-chart {"a" {:x [3 2 1] :y [4 5 7]}} {}))
+
+(c/view (xchart/xy-chart {"a" {:x [3 2 1] :y [4 5 7] :style {:render-style :area}}}))
 
