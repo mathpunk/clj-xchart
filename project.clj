@@ -3,7 +3,9 @@
   :url "https://github.com/hyPiRion/clj-xchart"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha16"]
+                 [org.clojure/spec.alpha "0.1.108"]
+                 [specviz "0.2.1"]
                  [org.knowm.xchart/xchart "3.2.1"]]
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]

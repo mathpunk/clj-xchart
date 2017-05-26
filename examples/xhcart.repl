@@ -1,0 +1,17 @@
+(require
+ '[com.hypirion.clj-xchart :as c]
+ '[clojure.pprint :as pp]
+ '[clojure.spec.alpha :as s]
+ '[com.hypirion.clj-xchart.specs :as cs]
+ '[com.hypirion.clj-xchart.specs.examples :as ex]
+ '[com.hypirion.clj-xchart.specs.series :as series]
+ '[com.hypirion.clj-xchart.specs.styling :as sty])
+
+
+(def argses (->> (s/exercise ::cs/xy-chart-args 10 ex/generators)
+                 (mapv first)))
+
+(->> argses
+     (map #(apply c/xy-chart %))
+     (apply c/view))
+

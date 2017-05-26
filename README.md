@@ -1,4 +1,8 @@
-# clj-xchart
+# Experiments with specing clj-xchart.
+
+This is *not* the current/official/blessed clj-xchart. That can be found at https://hypirion.github.io/clj-xchart/.
+
+## clj-xchart 
 
 [`Examples`](https://hypirion.github.io/clj-xchart/examples) | [`API docs`](https://hypirion.github.io/clj-xchart/api/0.2.0/en/)
 
