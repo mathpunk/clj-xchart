@@ -2,6 +2,8 @@
   (:require [clojure.spec.alpha :as s]
             [com.hypirion.clj-xchart :as c]
             [com.hypirion.clj-xchart.specs.macros :refer (defkeyset-spec)]
+            [com.hypirion.clj-xchart.specs.styling.bubble :as bubble]
+            [com.hypirion.clj-xchart.specs.styling.category :as category]
             [com.hypirion.clj-xchart.specs.styling.xy :as xy])
   (:import [java.awt Color Font Stroke]
            [org.knowm.xchart.style Theme]
@@ -35,8 +37,9 @@
                                        ::legend
                                        ::plot
                                        ::series]))
-(s/def ::xy-styling (s/merge ::styling-base
-                             (s/keys :opt-in [::xy/render-style])))
+(s/def ::xy-styling (s/merge ::styling-base (s/keys :opt-in [::xy/render-style])))
+(s/def ::category-styling (s/merge ::styling-base (s/keys :opt-in [::category/render-style])))
+(s/def ::bubble-styling (s/merge ::styling-base (s/keys :opt-in [::bubble/render-style])))
 (s/def ::chart (s/keys :opt-un [::background-color
                                 ::font-color
                                 ::padding
@@ -70,12 +73,6 @@
 (s/def ::theme (s/or :builtin ::builtin-theme
                      :custom theme?))
 
-(defkeyset-spec ::pie-render-style c/pie-render-styles)
-(defkeyset-spec ::category-render-style c/category-render-styles)
-(defkeyset-spec ::bubble-render-style c/bubble-render-styles)
-(s/def ::render-style (s/or :pie ::pie-render-style
-                            :category ::category-render-style
-                            :bubble ::bubble-render-style))
 (defkeyset-spec ::builtin-color c/colors)
 (s/def ::color (s/or :builtin ::builtin-color
                      :custom color?))

@@ -2,6 +2,9 @@
   (:require [clojure.spec.alpha :as s]
             [com.hypirion.clj-xchart :as c]
             [com.hypirion.clj-xchart.specs.series :as series]
+            [com.hypirion.clj-xchart.specs.series.bubble :as bubble]
+            [com.hypirion.clj-xchart.specs.series.category :as category]
+            [com.hypirion.clj-xchart.specs.series.xy :as xy]
             [com.hypirion.clj-xchart.specs.styling :as sty]))
 
 (defn styling-matches-series?
@@ -25,23 +28,13 @@
          (:render-style style)))
    (vals series)))
 
-(defn bubble-render-style?
-  [{:keys [style]}]
-  (#{:bubble nil} (-> style :render-style first)))
-
-(defn category-render-style?
-  [{:keys [style]}]
-  (#{:category nil} (-> style :render-style first)))
-
-(s/def ::xy-chart-args (s/and (s/cat :series ::series/xy-series :style ::sty/xy-styling)
+(s/def ::xy-chart-args (s/and (s/cat :series ::xy/series :style ::sty/xy-styling)
                               styling-matches-series?
                               series-compatible-with-render-style?))
 (s/fdef c/xy-chart :args ::xy-chart-args)
 
-(s/def ::bubble-chart*-args (s/and (s/cat :series ::series/bubble-series :style ::sty/styling)
-                                   styling-matches-series?
-                                   bubble-render-style?))
+(s/def ::bubble-chart*-args (s/and (s/cat :series ::bubble/series :style ::sty/bubble-styling)
+                                   styling-matches-series?))
 
-(s/def ::category-chart-args (s/and (s/cat :series ::series/category-series :style ::sty/styling)
-                                    styling-matches-series?
-                                    category-render-style?))
+(s/def ::category-chart-args (s/and (s/cat :series ::category/series :style ::sty/category-styling)
+                                    styling-matches-series?))

@@ -4,6 +4,9 @@
             [com.hypirion.clj-xchart :as c]
             [com.hypirion.clj-xchart.specs :as specs]
             [com.hypirion.clj-xchart.specs.series :as series]
+            [com.hypirion.clj-xchart.specs.series.bubble :as bubble]
+            [com.hypirion.clj-xchart.specs.series.category :as category]
+            [com.hypirion.clj-xchart.specs.series.xy :as xy]
             [com.hypirion.clj-xchart.specs.styling :as sty])
   (:import [java.awt Color Font]
            [org.knowm.xchart.style Theme]
@@ -35,9 +38,10 @@
 (def example-series-names
   #{"Grommets" "Hit Points" "Expected" "Actual" "Emacs Users" "Vim Users" "Pirates" "Global Warming"})
 
-(s/def ::xy-series-elem* (s/keys :req-un [::series/x ::series/y] :opt-un [::series/error-bars ::series/style]))
-(s/def ::bubble-series-elem* (s/keys :req-un [::series/x ::series/y ::series/bubble] :opt-un [::series/style]))
-(s/def ::category-series-elem* (s/keys :req-un [::series/x ::series/y] :opt-un [::series/style]))
+(s/def ::xy-series-elem* (s/keys :req-un [::series/x ::series/y] :opt-un [::series/error-bars ::xy/style]))
+(s/def ::bubble-series-elem* (s/keys :req-un [::series/x ::series/y ::bubble/bubble]
+                                     :opt-un [::bubble/style]))
+(s/def ::category-series-elem* (s/keys :req-un [::series/x ::series/y] :opt-un [::category/style]))
 ;; generators need their subgenerators
 (declare generators)
 
@@ -46,11 +50,11 @@
    #(s/gen (into #{} (map (fn [n] (str "Example Title " n))) (range 1 5)))
    ::series/chartable-number #(s/gen double?)
    ::series/series-name #(s/gen example-series-names)
-   ::series/xy-series-elem #(->> (s/gen ::xy-series-elem* generators)
+   ::xy/series-elem #(->> (s/gen ::xy-series-elem* generators)
                                  (gen/fmap force-axis-counts))
-   ::series/bubble-series-elem #(->> (s/gen ::bubble-series-elem* generators)
+   ::bubble/series-elem #(->> (s/gen ::bubble-series-elem* generators)
                                      (gen/fmap force-axis-counts))
-   ::series/category-series-elem #(->> (s/gen ::category-series-elem* generators)
+   ::category/series-elem #(->> (s/gen ::category-series-elem* generators)
                                        (gen/fmap force-axis-counts))
    ::series/show-in-legend? #(s/gen boolean?)
    ::sty/width #(s/gen #{200 300 400 500})

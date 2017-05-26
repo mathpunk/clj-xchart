@@ -5,7 +5,7 @@
 
 (defn axis-counts-match?
   [{:keys [x y error-bars bubble]}]
-  (and (= (count (second x)) ;; tricky: x is nested by conformance
+  (and (= (count x)
           (count y)
           (count (or error-bars x))
           (count (or bubble x)))))
@@ -27,7 +27,7 @@
                                               (:render-style style)))
 (defmethod data-compatible-with-render-style? :default [series] true)
 
-(defmethod data-compatible-with-render-style? [:xy :area]
+(defmethod data-compatible-with-render-style? [:area]
   [series]
   (ordered? (second (:x series))))
 
@@ -36,21 +36,6 @@
   (not (or (Double/isInfinite x) (Double/isNaN x))))
 
 (s/def ::series-name (s/and string? #(not (empty? %))))
-(s/def ::xy-series-elem (s/and (s/keys :req-un [::x ::y]
-                                       :opt-un [::error-bars ::style])
-                               axis-counts-match?
-                               data-compatible-with-render-style?))
-(s/def ::xy-series (s/map-of ::series-name ::xy-series-elem))
-
-(s/def ::bubble-series-elem (s/and (s/keys :req-un [::x ::y ::bubble]
-                                       :opt-un [::style])
-                               axis-counts-match?))
-(s/def ::bubble-series (s/map-of ::series-name ::bubble-series-elem))
-(s/def ::category-series-elem (s/and (s/keys :req-un [::x ::y]
-                                             :opt-un [::style])
-                                     axis-counts-match?))
-(s/def ::category-series (s/map-of ::series-name ::category-series-elem))
-
 
 (s/def ::chartable-number (s/and number? finite?))
 ;; TODO: turned off for now -- different axes cannot be mixed on same chart
@@ -62,18 +47,16 @@
         #_:strings #_(s/every string? :min-count 1)))
 (s/def ::y (s/every ::chartable-number :min-count 1))
 (s/def ::error-bars (s/every ::chartable-number :min-count 1))
-(s/def ::bubble (s/every ::chartable-number :min-count 1))
 
-(s/def ::style (s/keys :opt-un [::marker-color ::marker-type
-                                ::line-color ::line-style ::line-width
-                                ::fill-color ::show-in-legend? ::render-style]))
+(s/def ::style-base (s/keys :opt-un [::marker-color ::marker-type
+                                     ::line-color ::line-style ::line-width
+                                     ::fill-color ::show-in-legend?]))
 
 (s/def ::line-width (s/and ::chartable-number pos?))
 (s/def ::marker-color ::sty/color)
 (s/def ::line-color ::sty/color)
 (s/def ::fill-color ::sty/color)
 (s/def ::show-in-legend? any?)   ;; truthish
-(s/def ::render-style ::sty/render-style)
 
 ;; these capture some ad-hoc naming differences between series styling top-level styling
 (s/def ::marker-type ::sty/marker)

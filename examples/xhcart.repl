@@ -5,6 +5,7 @@
  '[com.hypirion.clj-xchart.specs :as cs]
  '[com.hypirion.clj-xchart.specs.examples :as ex]
  '[com.hypirion.clj-xchart.specs.series :as series]
+ '[com.hypirion.clj-xchart.specs.series.bubble :as bubble]
  '[com.hypirion.clj-xchart.specs.styling :as sty])
 
 
@@ -14,4 +15,20 @@
 (->> argses
      (map #(apply c/xy-chart %))
      (apply c/view))
+
+(def argses (->> (s/exercise ::cs/category-chart-args 5 ex/generators)
+                 (mapv first)))
+
+(->> argses
+     (map #(apply c/category-chart %))
+     (apply c/view))
+
+(def argses (->> (s/exercise ::cs/bubble-chart*-args 5 ex/generators)
+                 (mapv first)))
+
+
+(->> argses
+     (map #(apply c/bubble-chart* %))
+     (apply c/view))
+
 
