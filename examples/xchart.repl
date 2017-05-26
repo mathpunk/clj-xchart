@@ -1,5 +1,6 @@
 (require
  '[com.hypirion.clj-xchart :as c]
+ '[clojure.edn :as edn]
  '[clojure.pprint :as pp]
  '[clojure.spec.alpha :as s]
  '[clojure.spec.test.alpha :as test]
@@ -42,3 +43,10 @@
 
 (c/view (xchart/xy-chart {"a" {:x [3 2 1] :y [4 5 7] :style {:render-style :area}}}))
 
+
+;; this kills the JVM on OSX
+;; java version "1.8.0_77"
+;; Java(TM) SE Runtime Environment (build 1.8.0_77-b03)
+;; Java HotSpot(TM) 64-Bit Server VM (build 25.77-b03, mixed mode)
+(def args (edn/read-string (slurp "examples/problem1.edn")))
+(c/view (apply c/bubble-chart* args))
