@@ -1,52 +1,72 @@
 (require
- '[com.hypirion.clj-xchart :as c]
  '[clojure.edn :as edn]
  '[clojure.pprint :as pp]
  '[clojure.spec.alpha :as s]
  '[clojure.spec.test.alpha :as test]
  '[clojure.string :as str]
  '[com.hypirion.clj-xchart :as xchart]
- '[com.hypirion.clj-xchart.specs :as cs]
+ '[com.hypirion.clj-xchart.specs :as specs]
  '[com.hypirion.clj-xchart.specs.examples :as ex]
  '[com.hypirion.clj-xchart.specs.series :as series]
  '[com.hypirion.clj-xchart.specs.series.bubble :as bubble]
  '[com.hypirion.clj-xchart.specs.series.xy :as xy]
  '[com.hypirion.clj-xchart.specs.styling :as sty])
 
+(-> (xchart/xy-chart {"doublings"
+                 {:x [3 2 1] :y [6 5 4]}})
+    (xchart/spit "doublings.png"))
 
-(def argses (->> (s/exercise ::cs/xy-chart-args 10 ex/generators)
+;; fails on AWT thread
+(-> (xchart/xy-chart {"bad-doublings"
+                      {:x [3 2 1] :y [4 5 7]
+                       :style {:render-style :area}}})
+    (xchart/view))
+
+(s/valid? ::specs/xy-chart-args
+          [{"bad-doublings"
+            {:x [3 2 1] :y [6 5 4]
+             :style {:render-style :area}}}])
+
+(s/explain ::specs/xy-chart-args
+           [{"bad-doublings"
+             {:x [3 2 1] :y [6 5 4]
+              :style {:render-style :area}}}])
+
+(test/instrument [`xchart/xy-chart])
+
+;; catch problem earlier
+(xchart/xy-chart {"bad-doublings"
+                  {:x [3 2 1] :y [4 5 7]
+                   :style {:render-style :area}}})
+
+(s/exercise ::specs/xy-chart-args 1 ex/generators)
+(->> *1 ffirst (apply xchart/xy-chart) xchart/view)
+
+(apply xchart/xy-chart (ffirst *1))
+
+;; argses is the plural of args, yes, precious
+(def argses (->> (s/exercise ::specs/xy-chart-args 10 ex/generators)
                  (mapv first)))
 
 (->> argses
-     (map #(apply c/xy-chart %))
-     (apply c/view))
+     (map #(apply xchart/xy-chart %))
+     (apply xchart/view))
 
-(def argses (->> (s/exercise ::cs/category-chart-args 5 ex/generators)
+(def argses (->> (s/exercise ::specs/category-chart-args 5 ex/generators)
                  (mapv first)))
 
 (->> argses
-     (map #(apply c/category-chart %))
-     (apply c/view))
+     (map #(apply xchart/category-chart %))
+     (apply xchart/view))
 
-(def argses (->> (s/exercise ::cs/bubble-chart*-args 5 ex/generators)
+(def argses (->> (s/exercise ::specs/bubble-chart*-args 5 ex/generators)
                  (mapv first)))
 
 (->> argses
-     (map #(apply c/bubble-chart* %))
-     (apply c/view))
+     (map #(apply xchart/bubble-chart* %))
+     (apply xchart/view))
 
+;; instrument this project
 (->> (test/instrumentable-syms)
      (filter #(str/starts-with? (namespace %) "com.hypirion.clj-xchart"))
      (test/instrument))
-
-(c/view (xchart/xy-chart {"a" {:x [3 2 1] :y [4 5 7]}} {}))
-
-(c/view (xchart/xy-chart {"a" {:x [3 2 1] :y [4 5 7] :style {:render-style :area}}}))
-
-
-;; this kills the JVM on OSX
-;; java version "1.8.0_77"
-;; Java(TM) SE Runtime Environment (build 1.8.0_77-b03)
-;; Java HotSpot(TM) 64-Bit Server VM (build 25.77-b03, mixed mode)
-(def args (edn/read-string (slurp "examples/problem1.edn")))
-(c/view (apply c/bubble-chart* args))

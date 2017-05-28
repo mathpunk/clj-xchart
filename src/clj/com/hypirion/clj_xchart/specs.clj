@@ -24,11 +24,11 @@
   [{:keys [series]}]
   (every?
    (fn [{:keys [x style]}]
-     (or (series/ordered? (second x))
-         (:render-style style)))
+     (or (:render-style style)
+         (series/ordered? (second x))))
    (vals series)))
 
-(s/def ::xy-chart-args (s/and (s/cat :series ::xy/series :style ::sty/xy-styling)
+(s/def ::xy-chart-args (s/and (s/cat :series ::xy/series :style (s/? ::sty/xy-styling))
                               styling-matches-series?
                               series-compatible-with-render-style?))
 (s/fdef c/xy-chart :args ::xy-chart-args)
