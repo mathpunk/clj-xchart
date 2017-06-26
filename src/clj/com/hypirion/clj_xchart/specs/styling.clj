@@ -37,9 +37,9 @@
                                        ::legend
                                        ::plot
                                        ::series]))
-(s/def ::xy-styling (s/merge ::styling-base (s/keys :opt-in [::xy/render-style])))
-(s/def ::category-styling (s/merge ::styling-base (s/keys :opt-in [::category/render-style])))
-(s/def ::bubble-styling (s/merge ::styling-base (s/keys :opt-in [::bubble/render-style])))
+(s/def ::xy-styling (s/merge ::styling-base (s/keys :opt-un [::xy/render-style])))
+(s/def ::category-styling (s/merge ::styling-base (s/keys :opt-un [::category/render-style])))
+(s/def ::bubble-styling (s/merge ::styling-base (s/keys :opt-un [::bubble/render-style])))
 (s/def ::chart (s/keys :opt-un [::background-color
                                 ::font-color
                                 ::padding
